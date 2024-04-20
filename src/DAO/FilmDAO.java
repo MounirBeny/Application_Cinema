@@ -54,6 +54,8 @@ public class FilmDAO {
                 film.setPoster(resultSet.getString("Poster"));
                 films.add(film);
             }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération des films : " + e.getMessage());
         }
         return films;
     }
@@ -73,38 +75,6 @@ public class FilmDAO {
             }
         }
     }
-
-    // Méthode pour mettre à jour les détails d'un film dans la base de données
-    /*public static void updateFilm(Film film) throws SQLException {
-        String query = "UPDATE Films SET Titre = ?, Realisateur = ?, Synopsis = ?, PrixTicket = ?, "
-                + "Salle = ?, NotePresse = ?, MoyenneNotesMembres = ?, MoyenneNotesEmployes = ?, Poster = ? "
-                + "WHERE FilmID = ?";
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, film.getTitre());
-            statement.setString(2, film.getRealisateur());
-            statement.setString(3, film.getSynopsis());
-            statement.setDouble(4, film.getPrixTicket());
-            statement.setString(5, film.getSalle());
-            statement.setDouble(6, film.getNotePresse());
-            statement.setDouble(7, film.calculerMoyenneNotesMembres());
-            statement.setDouble(8, film.calculerMoyenneNotesEmployes());
-            statement.setString(9, film.getPoster());
-            statement.setInt(10, film.getFilmID());
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Détails du film mis à jour avec succès !");
-            } else {
-                System.out.println("Aucun film trouvé avec cet ID.");
-            }
-        }
-
-
-
-    }
-
-     */
 
     // Méthode pour mettre à jour les détails d'un film dans la base de données
     public static void updateFilm(Film film) throws SQLException {
@@ -131,6 +101,35 @@ public class FilmDAO {
                 System.out.println("Aucun film trouvé avec cet ID.");
             }
         }
+    }
+
+    // Méthode pour récupérer les détails d'un film spécifique en fonction de son ID
+    public static Film getFilmById(int filmId) throws SQLException {
+        String query = "SELECT * FROM Films WHERE FilmID = ?";
+        Film film = null;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, filmId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    film = new Film();
+                    film.setFilmID(resultSet.getInt("FilmID"));
+                    film.setTitre(resultSet.getString("Titre"));
+                    film.setRealisateur(resultSet.getString("Realisateur"));
+                    film.setSynopsis(resultSet.getString("Synopsis"));
+                    film.setPrixTicket(resultSet.getDouble("PrixTicket"));
+                    film.setSalle(resultSet.getString("Salle"));
+                    film.setNotePresse(resultSet.getDouble("NotePresse"));
+                    film.setMoyenneNotesMembres(resultSet.getDouble("MoyenneNotesMembres"));
+                    film.setMoyenneNotesEmployes(resultSet.getDouble("MoyenneNotesEmployes"));
+                    film.setPoster(resultSet.getString("Poster"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération du film : " + e.getMessage());
+        }
+        return film;
     }
 
 
