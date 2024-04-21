@@ -1,30 +1,28 @@
-package Main;//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+package Main;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import DAO.FilmDAO;
+import Modele.Film;
+import Vue.SelectionFilmsVue;
+
+import static javafx.application.Application.launch;
 
 public class Main {
     public static void main(String[] args) {
+        FilmDAO filmDAO = new FilmDAO();
+        SelectionFilmsVue selectionFilmsVue = new SelectionFilmsVue();
+
         try {
-            // Obtenir une connexion à la base de données
-            Connection connection = DatabaseConnection.getConnection();
+            // Récupérer la liste des films depuis la base de données
+            List<Film> films = filmDAO.getAllFilms();
 
-            // Exemple d'exécution d'une requête SQL
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Films");
-            ResultSet resultSet = statement.executeQuery();
-
-            // Traiter les résultats de la requête
-            while (resultSet.next()) {
-                System.out.println(resultSet.getString("Titre"));
-            }
-
-            // Fermer la connexion à la base de données
-            DatabaseConnection.closeConnection(connection);
+            // Afficher la liste des films à l'utilisateur
+            selectionFilmsVue.afficherListeFilms(films);
         } catch (SQLException e) {
-            e.printStackTrace();
+            selectionFilmsVue.afficherErreur("Erreur lors de la récupération des films : " + e.getMessage());
         }
+
+        launch(args);
     }
 }

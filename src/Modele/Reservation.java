@@ -17,6 +17,11 @@ public class Reservation {
         this.prixTotal = prixTotal;
     }
 
+    /* Constructeur par défaut */
+    public Reservation() {
+        // Vous pouvez initialiser les valeurs par défaut ici si nécessaire
+    }
+
     public int getReservationID() {
         return reservationID;
     }

@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import Modele.Reservation;
 import Main.DatabaseConnection;
+import java.util.ArrayList;
+import java.util.List;
+import Modele.Reservation;
 
 
 public class ReservationDAO {
@@ -36,5 +39,28 @@ public class ReservationDAO {
         double prixTotal = reservation.getNombreBillets() * reservation.getPrixTicket() * (1 - valeurReduction);
 
         return prixTotal;
+    }
+
+    // Méthode pour récupérer l'historique des réservations d'un client
+    public static List<Reservation> getHistoriqueReservations(int clientID) throws SQLException {
+        List<Reservation> historiqueReservations = new ArrayList<>();
+        String query = "SELECT * FROM Reservations WHERE ClientID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, clientID);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Reservation reservation = new Reservation();
+                    reservation.setReservationID(resultSet.getInt("ReservationID"));
+                    reservation.setFilmID(resultSet.getInt("FilmID"));
+                    reservation.setClientID(resultSet.getInt("ClientID"));
+                    reservation.setNombreBillets(resultSet.getInt("NombreBillets"));
+                    reservation.setPrixTotal(resultSet.getDouble("PrixTotal"));
+                    historiqueReservations.add(reservation);
+                }
+            }
+        }
+        return historiqueReservations;
     }
 }

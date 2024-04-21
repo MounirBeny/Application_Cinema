@@ -24,4 +24,14 @@ public class ReservationControleur {
             return 0.0;
         }
     }
+
+    // Méthode pour récupérer l'historique des réservations d'un client
+    public List<Reservation> getHistoriqueReservations(int clientID) {
+        try {
+            return ReservationDAO.getHistoriqueReservations(clientID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
